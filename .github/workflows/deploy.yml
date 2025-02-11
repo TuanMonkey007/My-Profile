@@ -16,28 +16,15 @@ jobs:
       - name: Set up SSH Key
         run: |
           mkdir -p ~/.ssh
-          echo "${{ secrets.SERVER_SSH_KEY }}" > ~/.ssh/id_rsa
+          echo "${{ secrets.SERVER_SSH_KEY }}" | tr -d '\r' > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan -H ${{ secrets.SERVER_IP }} >> ~/.ssh/known_hosts
 
-      - name: Verify SSH Key
-        run: ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no -T ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }} || exit 1
-
       - name: Deploy to VPS
         run: |
-          ssh -o StrictHostKeyChecking=no ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
-          set -e  # Nếu có lỗi thì dừng ngay lập tức
-
-          echo "📂 Chuyển đến thư mục dự án..."
-          cd /root/MinhTuan-Profile || { echo "❌ Thư mục không tồn tại!"; exit 1; }
-
-          echo "🔄 Reset code về trạng thái mới nhất..."
-          git reset --hard
-          git pull origin main
-
-          echo "🛑 Dừng container cũ..."
-          docker-compose down || true  # Nếu container không chạy thì không bị lỗi
-
-          echo "🚀 Build và khởi động container mới..."
-          docker-compose up -d --build
+          ssh -i ~/.ssh/id_rsa ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }}
+          cd /root/MinhTuan-Profile  # Thay đường dẫn thư mục dự án
+          git pull origin main      # Cập nhật code từ GitHub
+          docker-compose down       # Dừng các container cũ
+          docker-compose up -d --build  # Build và chạy lại container
           EOF
