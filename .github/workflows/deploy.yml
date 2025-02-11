@@ -27,7 +27,9 @@ jobs:
       - name: Deploy to VPS
         run: |
           ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
-          cd /root/MinhTuan-Profile  # Thay đường dẫn thư mục dự án 
+          pwd
+          cd /root/My-Profile  # Thay đường dẫn thư mục dự án 
+          pwd
           git fetch origin
           git reset --hard origin/main  # Đảm bảo code được cập nhật chính xác
           docker-compose down  # Dừng các container cũ
