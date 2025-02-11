@@ -3,7 +3,7 @@ name: Deploy to VPS
 on:
   push:
     branches:
-      - main  # Thay 'main' nếu bạn dùng branch khác
+      - main  # Thay 'main' bằng nhánh bạn muốn deploy
 
 jobs:
   deploy:
@@ -13,16 +13,31 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Deploy to VPS via SSH
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          host: ${{ secrets.SERVER_IP }}
-          username: ${{ secrets.SERVER_USER }}
-          key: ${{ secrets.SERVER_SSH_KEY }}
-          script: |
-            cd /root/MinhTuan-Profile || { echo "Thư mục không tồn tại!"; exit 1; }
-            git pull origin main
-            docker compose down
-            docker compose build --no-cache
-            docker compose up -d --force-recreate
-            docker system prune -af
+      - name: Set up SSH Key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SERVER_SSH_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H ${{ secrets.SERVER_IP }} >> ~/.ssh/known_hosts
+
+      - name: Verify SSH Key
+        run: ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no -T ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }} || exit 1
+
+      - name: Deploy to VPS
+        run: |
+          ssh -o StrictHostKeyChecking=no ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
+          set -e  # Nếu có lỗi thì dừng ngay lập tức
+
+          echo "📂 Chuyển đến thư mục dự án..."
+          cd /root/MinhTuan-Profile || { echo "❌ Thư mục không tồn tại!"; exit 1; }
+
+          echo "🔄 Reset code về trạng thái mới nhất..."
+          git reset --hard
+          git pull origin main
+
+          echo "🛑 Dừng container cũ..."
+          docker-compose down || true  # Nếu container không chạy thì không bị lỗi
+
+          echo "🚀 Build và khởi động container mới..."
+          docker-compose up -d --build
+          EOF
