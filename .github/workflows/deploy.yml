@@ -20,11 +20,16 @@ jobs:
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan -H ${{ secrets.SERVER_IP }} >> ~/.ssh/known_hosts
 
+      - name: Test SSH Connection
+        run: |
+          ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }} echo "SSH connection successful!"
+
       - name: Deploy to VPS
         run: |
-          ssh -i ~/.ssh/id_rsa ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }}
+          ssh -i ~/.ssh/id_rsa ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
           cd /root/MinhTuan-Profile  # Thay đường dẫn thư mục dự án
-          git pull origin main      # Cập nhật code từ GitHub
-          docker-compose down       # Dừng các container cũ
+          git fetch origin
+          git reset --hard origin/main  # Đảm bảo code được cập nhật chính xác
+          docker-compose down  # Dừng các container cũ
           docker-compose up -d --build  # Build và chạy lại container
           EOF
