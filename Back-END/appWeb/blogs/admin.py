@@ -25,6 +25,9 @@ class BlogCommentAdmin(admin.ModelAdmin):
     list_display = ('blog_post', 'user', 'comment', 'created_at', 'updated_at')
     list_filter = ('created_at', 'updated_at')
     
+
+
+    
 admin.site.register(Blog, BlogAdmin)
 admin.site.register(BlogPost, BlogPostAdmin)
 admin.site.register(BlogComment, BlogCommentAdmin)

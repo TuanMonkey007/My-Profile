@@ -1,5 +1,6 @@
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.db import models
+from tinymce.models import HTMLField
 from appCore.helpers import get_file_path
 
 
@@ -42,3 +43,15 @@ class CustomUser(AbstractUser):
         return self.username
 
 
+class Experience(models.Model):
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    company_name = models.CharField(max_length=200)
+    company_logo = models.ImageField(upload_to=get_file_path, null=True, blank=True)
+    company_website = models.URLField(null=True, blank=True)
+    position = models.CharField(max_length=200)
+    description = HTMLField(null=True, blank=True)
+    start_date = models.DateField(null=True, blank=True)
+    end_date = models.DateField(null=True, blank=True)
+
+    def __str__(self):
+        return f"{self.company_name} - {self.position}"
