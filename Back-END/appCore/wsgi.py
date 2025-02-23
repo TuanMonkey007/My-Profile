@@ -1,5 +1,5 @@
 """
-WSGI config for backendProfile project.
+WSGI config for appCore project.
 
 It exposes the WSGI callable as a module-level variable named ``application``.
 
@@ -11,6 +11,6 @@ import os
 
 from django.core.wsgi import get_wsgi_application
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'backendProfile.settings')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'appCore.settings')
 
 application = get_wsgi_application()
