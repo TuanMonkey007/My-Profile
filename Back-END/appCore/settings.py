@@ -40,9 +40,10 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'appCore',
-    'blogs',
     'tinymce',
     'django_cleanup.apps.CleanupConfig',
+    'appWeb.blogs',
+    'appWeb.profiles',
 ]
 
 MIDDLEWARE = [
@@ -122,6 +123,7 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
+AUTH_USER_MODEL = 'profiles.CustomUser'
 
 
 # Internationalization
