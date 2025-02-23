@@ -44,4 +44,15 @@ class BlogPost(models.Model):
     class Meta:
         verbose_name = 'Blog Post'
         verbose_name_plural = 'Blog Posts'
-      
+
+class BlogComment(models.Model):
+    blog_post = models.ForeignKey(BlogPost, on_delete=models.CASCADE)
+    user = models.ForeignKey('profiles.CustomUser', on_delete=models.CASCADE)
+    comment = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ['-created_at']
+        verbose_name = 'Blog Comment'
+        verbose_name_plural = 'Blog Comments'

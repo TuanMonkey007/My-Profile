@@ -2,7 +2,7 @@ from django.contrib import admin
 from appCore.constants import APP_VALUE_ADMIN_MEDIA_JS
 # Register your models here.
 
-from .models import Blog, BlogPost
+from .models import Blog, BlogPost, BlogComment
 
 class BlogAdmin(admin.ModelAdmin):
     list_display = ('title', 'slug', 'status')
@@ -21,5 +21,10 @@ class BlogPostAdmin(admin.ModelAdmin):
         js = APP_VALUE_ADMIN_MEDIA_JS
 
 
+class BlogCommentAdmin(admin.ModelAdmin):
+    list_display = ('blog_post', 'user', 'comment', 'created_at', 'updated_at')
+    list_filter = ('created_at', 'updated_at')
+    
 admin.site.register(Blog, BlogAdmin)
 admin.site.register(BlogPost, BlogPostAdmin)
+admin.site.register(BlogComment, BlogCommentAdmin)
