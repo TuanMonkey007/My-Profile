@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'django_cleanup.apps.CleanupConfig',
     'appWeb.blogs',
     'appWeb.profiles',
+    'appWeb.shortener',
 ]
 
 MIDDLEWARE = [
@@ -79,6 +80,8 @@ WSGI_APPLICATION = 'appCore.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
+import pymysql
+pymysql.install_as_MySQLdb()
 
 DATABASES = {
     # 'default': {

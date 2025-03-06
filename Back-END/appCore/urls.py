@@ -22,5 +22,7 @@ from drf_yasg import openapi
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/', include('api.blogs.urls')), # Dang ky api cho blogs
+    path('', include('appWeb.shortener.urls')),  # Tích hợp routes của app shortener
+
+    #path('api/', include('api.blogs.urls')), # Dang ky api cho blogs
 ]
