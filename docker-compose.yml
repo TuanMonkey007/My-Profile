@@ -1,9 +1,71 @@
-version: '3.8'
+# version: '3.8'
+
+# services:
+#   frontend:
+#     build:
+#       context: ./Portofolio-v2
+#     ports:
+#       - "8080:80"
+#     restart: always
+
+
 
 services:
-  frontend:
+  vue-frontend:
     build:
       context: ./Portofolio-v2
     ports:
       - "8080:80"
     restart: always
+    networks:
+      - production-network
+  django-backend:
+    build: 
+      context: ./Back-END
+    container_name: django_backend
+    restart: always
+    depends_on:
+      mysql:
+        condition: service_healthy
+    environment:
+      DB_NAME: MinhTuan_Profile  # Đổi database -> MinhTuan_Profile
+      DB_HOST: mysql_production  # Đổi localhost -> mysql_production
+      DB_PORT: 3306
+      DB_USER: root
+      DB_PASSWORD: tuandeptrai
+      PIPELINE: PRODUCTION
+
+    ports:
+      - "8000:8000"
+    networks:
+      - production-network
+
+  mysql:
+    image: mysql:8.0
+    container_name: mysql_production
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: tuandeptrai  # Mật khẩu root
+      MYSQL_DATABASE: MinhTuan_Profile  # Database mặc định
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+       production-network:
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      retries: 5
+      start_period: 20s
+      timeout: 5s
+
+volumes:
+  mysql_data:
+    name: mysql_data_production
+
+
+
+networks:
+  production-network:
+    name: production-network
