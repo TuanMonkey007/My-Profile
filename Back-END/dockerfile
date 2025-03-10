@@ -1,0 +1,23 @@
+# Base image
+FROM python:3.12-slim
+
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
+
+ENV DJANGO_SETTINGS_MODULE=appCore.settings
+# Đặt thư mục làm việc trong container
+WORKDIR /app
+
+# Copy file requirements vào container trước để tối ưu cache layer
+COPY requirements.txt .
+RUN pip install --upgrade pip
+# Cài đặt các thư viện cần thiết
+RUN pip install -r requirements.txt
+# Copy toàn bộ mã nguồn backend vào container
+COPY . /app/
+
+EXPOSE 8000
+RUN pip install --upgrade cryptography
+
+
+CMD ["python3", "manage.py", "runserver", "0.0.0.0:8000"]

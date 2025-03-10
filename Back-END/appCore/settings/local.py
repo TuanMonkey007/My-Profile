@@ -11,8 +11,12 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 from pathlib import Path
-from .constants import *
+from appCore.constants import *
 import os
+from dotenv import load_dotenv
+
+# Load biến môi trường từ file .env
+load_dotenv()
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -98,13 +102,13 @@ DATABASES = {
     #     'PORT': '5432',
     # }
 
-    'default': { # MySQL database
+      'default': { # mysql
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': SERVER_CONFIG_DB_NAME,
-        'USER': SERVER_CONFIG_DB_USER,
-        'PASSWORD': SERVER_CONFIG_DB_PASSWORD,
-        'HOST': SERVER_CONFIG_DB_HOST,
-        'PORT': SERVER_CONFIG_DB_PORT,
+        'NAME': os.getenv('SERVER_CONFIG_DB_NAME'),
+        'USER': os.getenv('SERVER_CONFIG_DB_USER'),
+        'PASSWORD': os.getenv('SERVER_CONFIG_DB_PASSWORD'),
+        'HOST': os.getenv('SERVER_CONFIG_DB_HOST'),
+        'PORT': os.getenv('SERVER_CONFIG_DB_PORT', '3306'),
     }
 }
 
