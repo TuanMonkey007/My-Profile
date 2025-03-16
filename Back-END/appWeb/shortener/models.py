@@ -17,7 +17,6 @@ class ShortURL(models.Model):
                 if not ShortURL.objects.filter(short_code = new_code).exists():
                         self.short_code = new_code
                         break
-                self.short_code = hashids.encode(len(ShortURL.objects.all()) + 1)
         super().save(*args, **kwargs)
 
     def __str__(self):
