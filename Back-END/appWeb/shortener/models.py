@@ -11,17 +11,16 @@ class ShortURL(models.Model):
     access_count = models.IntegerField(default=0)
 
     def save(self, *args, **kwargs):
-        # Lưu lần đầu để lấy self.id
-        super().save(*args, **kwargs)
-
-        # Tạo short_code nếu chưa có
         if not self.short_code:
-            while True:
-                new_code = hashids_instance.encode(self.id)
-                if not ShortURL.objects.filter(short_code=new_code).exists():
-                    self.short_code = new_code
-                    super().save(*args, **kwargs)
-                    break
+            new_code = hashids_instance.encode(ShortURL.objects.count() + 1)
+
+        # Kiểm tra trùng lặp short_code trong database
+            while ShortURL.objects.filter(short_code=new_code).exists():
+                new_code = hashids_instance.encode(ShortURL.objects.count() + 1)
+
+            self.short_code = new_code
+
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return f"{self.short_code} -> {self.original_url}"
