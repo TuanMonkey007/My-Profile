@@ -34,6 +34,10 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
+CSRF_TRUSTED_ORIGINS = [
+    "https://nguyenminhtuan.id.vn",
+    "https://www.nguyenminhtuan.id.vn"
+]
 
 # Application definition
 
