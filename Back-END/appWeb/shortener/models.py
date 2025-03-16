@@ -1,4 +1,6 @@
 from django.db import models
+from django.db.models.signals import pre_save
+from django.dispatch import receiver
 from hashids import Hashids
 
 # Khởi tạo Hashids để tạo mã rút gọn
@@ -10,14 +12,19 @@ class ShortURL(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     access_count = models.IntegerField(default=0)
 
-    def save(self, *args, **kwargs):
-        if not self.short_code:
-            while True:
-                new_code=hashids_instance.encode(self.id or ShortURL.objects.count() +1)
-                if not ShortURL.objects.filter(short_code = new_code).exists():
-                        self.short_code = new_code
-                        break
-        super().save(*args, **kwargs)
-
     def __str__(self):
         return f"{self.short_code} -> {self.original_url}"
+
+
+@receiver(pre_save, sender=ShortURL)
+def generate_short_code(sender, instance, **kwargs):
+    if not instance.short_code:
+        # Đảm bảo instance.id đã được gán
+        if not instance.id:
+            instance.id = ShortURL.objects.count() + 1
+        
+        while True:
+            new_code = hashids_instance.encode(instance.id)
+            if not ShortURL.objects.filter(short_code=new_code).exists():
+                instance.short_code = new_code
+                break
