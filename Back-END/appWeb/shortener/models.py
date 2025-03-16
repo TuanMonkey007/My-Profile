@@ -13,7 +13,7 @@ class ShortURL(models.Model):
     def save(self, *args, **kwargs):
         if not self.short_code:
             while True:
-                new_code=hashids_instance.encode(self.id or ShortURL.object.count() +1)
+                new_code=hashids_instance.encode(self.id or ShortURL.objects.count() +1)
                 if not ShortURL.object.filter(short_code = new_code).exists():
                         self.short_code = new_code
                         break
