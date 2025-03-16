@@ -2,7 +2,7 @@ from django.db import models
 from hashids import Hashids
 
 # Khởi tạo Hashids để tạo mã rút gọn
-hashids = Hashids(min_length=6, salt="your_secret_salt")
+hashids_instance = Hashids(min_length=6, salt="your_secret_salt")
 
 class ShortURL(models.Model):
     original_url = models.URLField()
